@@ -22,18 +22,17 @@ module "iam" {
 }
 
 module "lambda" {
-  source              = "./modules/lambda"
-  function_name       = "${var.project_name}-image-resizer"
-  lambda_role_arn     = module.iam.role_arn
-  destination_bucket  = module.s3.destination_bucket_name
-  sns_topic_arn       = module.sns.topic_arn
-  source_bucket_arn   = module.s3.source_bucket_arn
-  timeout             = var.lambda_timeout
-  memory_size         = var.lambda_memory_size
-  resized_width       = var.resized_width
-  resized_height      = var.resized_height
-}
-
-resource "random_id" "bucket_suffix" {
-  byte_length = 4
+  source             = "./modules/lambda_function"
+  function_name      = var.lambda_function_name
+  role_arn           = module.iam.lambda_role_arn
+  handler            = "image_resizer.lambda_handler"
+  runtime            = "python3.11" # or your preferred runtime
+  filename           = "./Functions/lambda_function.zip"
+  source_bucket_name = module.s3_buckets.original_images_bucket_name
+  dest_bucket_name   = module.s3_buckets.processed_images_bucket_name
+  sns_topic_arn      = module.sns.topic_arn
+  resize_width       = var.resize_width
+  memory_size        = 512
+  timeout            = 60
+  tags               = var.tags
 }

@@ -46,3 +46,19 @@ variable "resized_height" {
   type        = number
   default     = 600
 }
+
+variable "source_bucket_name" {
+  type        = string
+}
+
+variable "handler" {
+  type        = string
+}
+
+variable "runtime" {
+  type        = string
+}
+
+variable "filename" {
+  type        = string
+}
